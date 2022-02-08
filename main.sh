@@ -1,26 +1,36 @@
 #!/usr/bin/env bash
 
-function fix_word_leght (){
-  local lenght="${1}"
-  local word="${2}"
-  local difference
+function longest_string(){
+  local max=0
 
-  [ "${#word}" -eq "$lenght" ] && {
-    echo "$word"
-    return
-  }
+  for word in "${@}";do 
+    [ "${#word}" -ge "${max}" ] && max="${#word}"
+  done
   
-  difference="$(( ${lenght}-${#word} ))"
-  echo "$word$(printf ' %.0s' {1..$difference})"
+  echo "$max"
+
 }
 
-function log(){
+function shlog(){
+
     local is_printed="${1}"
-    local level="${2}"
-    shift 2
-    [ "${is_printed}" -eq 0 ] && {
-      log_format_string="$(date '+%Y-%m-%d %H:%M:%S') | ${BASH_SOURCE[0]} | ${level} |"
-      echo -e "${log_format_string} ${*}" >&2 
+    local padding="${2}"
+    local level="${3}"
+    shift 3
+    local message="${*}"
+    local datetime="$( date '+%Y-%m-%d %H:%M:%S' )"
+    local current_file="${BASH_SOURCE[0]}"
+
+
+    [ "${is_printed}" -eq 0 ] && { 
+      
+      printf '%s | %s | %-*s | %s\n' \
+        "$datetime" \
+        "$current_file" \
+        "$padding" \
+        "$level" \
+        "$message" >&2     
+
     }      
 }
 
@@ -28,6 +38,7 @@ function set_logger (){
     local LOGGER_LEVEL="${LOGGER_LEVEL:-INFO}"
     local levels
     local is_printed
+    local padding
 
     declare -A levels=(
         ['ERROR']=0
@@ -36,10 +47,12 @@ function set_logger (){
         ['DEBUG']=3
     )
 
+    padding="$( longest_string ${!levels[@]} )"
+
     for level in "${!levels[@]}";do
         is_printed=1
         [ "${levels[$level]}" -le "${levels[$LOGGER_LEVEL]}" ] && is_printed=0
-        eval "log.${level,,} (){ log ${is_printed} "$(fix_word_leght 7 ${level,,})" \${*}; }"
+        eval "shlog.${level,,} (){ shlog ${is_printed} ${padding} ${level}  \${*}; }"
     done
 
 }
@@ -47,10 +60,10 @@ function set_logger (){
 function main (){
     set_logger
     
-    log.error "this is a "
-    log.warning "this is a "
-    log.info "this s a "
-    log.debug "this"
+    shlog.error "this is a test"
+    shlog.warning "this is a test"
+    shlog.info "this s a test"
+    shlog.debug "this is a test"
 }
 
 [ "${BASH_SOURCE[0]}" == "${0}" ] && main "${@}"
