@@ -1,5 +1,31 @@
 #!/usr/bin/env bash
 
+function set_config ()
+
+{
+
+  # dafault config
+  __DATETIME="$( date '+%Y-%m-%d %H:%M:%S' )"
+
+  __LOGGER_LEVEL="INFO"
+
+  __LOGGER_LEVELS=(
+        ['ERROR']=0
+        ['WARNING']=1
+        ['INFO']=2
+        ['DEBUG']=3
+    )
+  
+  __PADDING
+  
+  # check for a user seted config
+  [ -v "${LOGGER_CONFIG}" ] && {
+    . "${LOGGER_CONFIG}"
+    exit 0
+  }
+
+}
+
 ##########################
 # Returns the lenght of the longest
 # level string.
@@ -76,8 +102,7 @@ function set_logger (){
 }
 
 function test (){
-    set_logger "${@}"
-    
+    set_logger "${@}"    
     shlog.error "this is a test"
     shlog.warning "this is a test"
     shlog.info "this s a test"
