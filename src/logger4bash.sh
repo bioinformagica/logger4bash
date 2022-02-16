@@ -1,31 +1,5 @@
 #!/usr/bin/env bash
 
-function set_config ()
-
-{
-
-  # dafault config
-  __DATETIME="$( date '+%Y-%m-%d %H:%M:%S' )"
-
-  __LOGGER_LEVEL="INFO"
-
-  __LOGGER_LEVELS=(
-        ['ERROR']=0
-        ['WARNING']=1
-        ['INFO']=2
-        ['DEBUG']=3
-    )
-  
-  __PADDING
-  
-  # check for a user seted config
-  [ -v "${LOGGER_CONFIG}" ] && {
-    . "${LOGGER_CONFIG}"
-    exit 0
-  }
-
-}
-
 ##########################
 # Returns the lenght of the longest
 # level string.
@@ -73,13 +47,32 @@ function shlog(){
     }      
 }
 
+function parse_args ()
+{
+
+  local arg_key
+  local arg_value
+
+  declare -A parsed_args
+
+  for raw_arg in "${@}";do 
+    arg_key="${raw_arg/=*}"
+    arg_value="${raw_arg/*=}"
+    parse_args["${arg_key}"]="${arg_value}"
+  done
+
+}
+
 ##########################
 # Function to genarete level  
 # log functions (ex: shlog.error, shlog.info, ...).
 # arg 1 (str):  Log level: ERROR, WARNING, 'INFO'(default) or 'DEBUG'.
 # out        :  None
 function set_logger (){
-    local logger_level="${1:-INFO}"
+
+    declare -A args="( $(parse_args) )"
+
+    local logger_level="${__LOGGER_LEVEL:-INFO}"
     local levels
     local is_printed
     local padding
