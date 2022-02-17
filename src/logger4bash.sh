@@ -63,6 +63,24 @@ function parse_args ()
 
 }
 
+function setup_log_file ()
+{
+  local log_fname="${1}"
+  local append="${2}"
+
+  case "${append}" in 
+
+    'true'  )
+      exec 2>>"${log_fname}"
+      ;;
+
+    'false' )
+      exec 2>"${log_fname}"
+
+  esac
+
+}
+
 ##########################
 # Function to genarete level  
 # log functions (ex: shlog.error, shlog.info, ...).
@@ -70,7 +88,10 @@ function parse_args ()
 # out        :  None
 function set_logger (){
 
-    declare -A args="( $(parse_args) )"
+    declare -A args
+    parse_args args
+
+    [ "${args['to_file']}" ] && echo loggin to file "${args['to_file']}"
 
     local logger_level="${__LOGGER_LEVEL:-INFO}"
     local levels
