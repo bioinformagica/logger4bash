@@ -49,18 +49,16 @@ function shlog(){
 
 function parse_args ()
 {
-
+  local -n local_args="$1" # reference to args associative array
+  shift 
   local arg_key
   local arg_value
-
-  declare -A parsed_args
 
   for raw_arg in "${@}";do 
     arg_key="${raw_arg/=*}"
     arg_value="${raw_arg/*=}"
-    parse_args["${arg_key}"]="${arg_value}"
+    local_args["${arg_key}"]="${arg_value}"
   done
-
 }
 
 function setup_log_file ()
@@ -89,7 +87,7 @@ function setup_log_file ()
 function set_logger (){
 
     declare -A args
-    parse_args args
+    parse_args args "${@}"
 
     [ "${args['to_file']}" ] && echo loggin to file "${args['to_file']}"
 
@@ -116,7 +114,7 @@ function set_logger (){
 }
 
 function test (){
-    set_logger "${@}"    
+    set_logger 'to_file=./teste_log.txt'
     shlog.error "this is a test"
     shlog.warning "this is a test"
     shlog.info "this s a test"
