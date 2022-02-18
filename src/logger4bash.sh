@@ -84,13 +84,7 @@ function setup_log_file ()
 # log functions (ex: shlog.error, shlog.info, ...).
 # arg 1 (str):  Log level: ERROR, WARNING, 'INFO'(default) or 'DEBUG'.
 # out        :  None
-function set_logger (){
-
-    declare -A args
-    parse_args args "${@}"
-
-    [ "${args['to_file']}" ] && echo loggin to file "${args['to_file']}"
-
+function setup_logger (){
     local logger_level="${__LOGGER_LEVEL:-INFO}"
     local levels
     local is_printed
@@ -102,9 +96,22 @@ function set_logger (){
         ['INFO']=2
         ['DEBUG']=3
     )
+    
+    # parsing args
+    declare -A args
+    parse_args args "${@}"
+
+    # Redirecting to a file
+    [ "${args['to_file']}" ] && exec 2>"${args['to_file']}"
+
+    # Setting args logger level with an arg
+    [ "${args['logger_level']}" ] && \
+      [ "${level[${args[logger_level]}]}" ] && \
+      __LOGGER_LEVEL="${level[${args[logger_level]}]}"
 
     padding="$( longest_string ${!levels[@]} )"
-
+    
+    # Dynamically create logger level functions: Ex shlog.error(), shlog.warning()
     for level in "${!levels[@]}";do
         is_printed=1
         [ "${levels[$level]}" -le "${levels[$logger_level]}" ] && is_printed=0
@@ -114,7 +121,7 @@ function set_logger (){
 }
 
 function test (){
-    set_logger 'to_file=./teste_log.txt'
+    setup_logger 'to_file=./teste_log.txt logger_level=DEBUG'
     shlog.error "this is a test"
     shlog.warning "this is a test"
     shlog.info "this s a test"
