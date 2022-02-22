@@ -49,22 +49,34 @@ function shlog(){
 
 function parse_args ()
 {
-  local -n local_args="$1" # reference to args associative array
-  shift 
-  local arg_key
-  local arg_value
 
-  for raw_arg in "${@}";do 
-    arg_key="${raw_arg/=*}"
-    arg_value="${raw_arg/*=}"
-    local_args["${arg_key}"]="${arg_value}"
+  [ "$#" -eq 0 ] && {
+    usage
+    exit 0
+  }
+
+  declare -n args_handler="$1"
+  shift
+
+  while [ -n "$1" ];do
+    case "$1" in
+
+      *=* )
+        args_handler["${1/=*}"]="${1/*=}"
+        ;;
+
+      * )
+        args_handler["${1}"]="true"
+    esac
+
+    shift
   done
 }
 
 function setup_log_file ()
 {
   local log_fname="${1}"
-  local append="${2}"
+  local append="${2:-false}"
 
   case "${append}" in 
 
@@ -121,7 +133,7 @@ function setup_logger (){
 }
 
 function test (){
-    setup_logger 'to_file=./teste_log.txt logger_level=DEBUG'
+    setup_logger 'to_file=./teste_log.txt append_log=true logger_level=DEBUG'
     shlog.error "this is a test"
     shlog.warning "this is a test"
     shlog.info "this s a test"
