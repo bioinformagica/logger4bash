@@ -114,7 +114,7 @@ function setup_logger (){
     parse_args args "${@}"
 
     # Redirecting to a file
-    [ "${args['to_file']}" ] && exec 2>"${args['to_file']}"
+    [ "${args['to_file']}" ] && setup_log_file "${args['to_file']}" "${args['append_log']}"
 
     # Setting args logger level with an arg
     [ "${args['logger_level']}" ] && \
@@ -133,7 +133,7 @@ function setup_logger (){
 }
 
 function test (){
-    setup_logger 'to_file=./teste_log.txt append_log=true logger_level=DEBUG'
+    setup_logger 'to_file=./teste_log.txt' 'append_log=true' 'logger_level=DEBUG'
     shlog.error "this is a test"
     shlog.warning "this is a test"
     shlog.info "this s a test"
