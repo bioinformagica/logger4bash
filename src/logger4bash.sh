@@ -48,6 +48,17 @@ function shlog(){
 }
 
 function parse_args ()
+##################################################
+# Gets a ass. array handle and converts
+# args 'key=value' to handle[key]=value.
+# args without values are default to handle[key]=true
+# arg 1:
+#       ass. array handle
+# arg @:
+#        keys and values ex: 'to_file=fname.log' 'append=false'...
+# out:
+#       None; increment ass. array with parsed args
+#################################################
 {
 
   [ "$#" -eq 0 ] && {
@@ -74,6 +85,17 @@ function parse_args ()
 }
 
 function setup_log_file ()
+##################################
+# Redirect stderr default register to 
+# a file.
+# arg 1:
+#       path to file 
+# arg 2:
+#       'true' if append mode. [ dafault: 'false' ]
+# out:
+#       None. Redirect (exec 2) to a file in
+#       overwrite (default) or append 
+##################################
 {
   local log_fname="${1}"
   local append="${2:-false}"
@@ -84,7 +106,7 @@ function setup_log_file ()
       exec 2>>"${log_fname}"
       ;;
 
-    'false' )
+    * )
       exec 2>"${log_fname}"
 
   esac
