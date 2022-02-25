@@ -37,7 +37,7 @@ function shlog(){
 
     [ "${is_printed}" -eq 0 ] && { 
       
-      printf '%s | %s | %-*s | %s\n' \
+      printf '>>> %s | %s | %-*s | %s\n' \
         "$datetime" \
         "$current_file" \
         "$padding" \
@@ -154,12 +154,4 @@ function setup_logger (){
 
 }
 
-function test (){
-    setup_logger 'to_file=./teste_log.txt' 'append_log=true' 'logger_level=DEBUG'
-    shlog.error "this is a test"
-    shlog.warning "this is a test"
-    shlog.info "this s a test"
-    shlog.debug "this is a test"
-}
-
-[ "${BASH_SOURCE[0]}" == "${0}" ] && test "${@}"
+[ "${BASH_SOURCE[0]}" == "${0}" ] && setup_logger "${@}"
