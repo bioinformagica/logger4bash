@@ -149,7 +149,9 @@ function setup_logger (){
     for level in "${!levels[@]}";do
         is_printed=1
         [ "${levels[$level]}" -le "${levels[$logger_level]}" ] && is_printed=0
-        eval "shlog.${level,,} (){ shlog ${is_printed} ${padding} ${level}  \${*}; }"
+        local log_function_name="shlog.${level,,}"
+        eval "${log_function_name} (){ shlog ${is_printed} ${padding} ${level}  \${*}; }"
+#        	export -f "${log_function_name}"
     done
 
 }
