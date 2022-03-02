@@ -1,3 +1,3 @@
-#+TITLE: BASHER LOG
+#+TITLE: logger4bash
 
 Early development, nothing to see here.
