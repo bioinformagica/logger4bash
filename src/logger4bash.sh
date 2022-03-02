@@ -16,6 +16,18 @@ function longest_string(){
 
 }
 
+
+function where_am_i ()
+# Print the name of the current function:
+# args:
+#     None.
+# out:
+#     Name of the function.
+{
+  local function_name="${FUNCNAME[3]:-${BASH_SOURCE[0]}}"
+  echo "$function_name"
+}
+
 ##########################
 # Default log function
 # arg 1 (int): Variable to sign if a log massage
@@ -32,16 +44,17 @@ function shlog(){
     shift 3
     local message="${*}"
     local datetime="$( date '+%Y-%m-%d %H:%M:%S' )"
-    local current_file="${BASH_SOURCE[0]}"
+#     local current_file="${BASH_SOURCE[0]}"
+    local function_name="$( where_am_i )"
 
 
     [ "${is_printed}" -eq 0 ] && { 
       
-      printf '>>> %s | %s | %-*s | %s\n' \
+      printf '>>> %s | %-*s | %s | %s\n' \
         "$datetime" \
-        "$current_file" \
         "$padding" \
         "$level" \
+        "$function_name" \
         "$message" >&2     
 
     }      
