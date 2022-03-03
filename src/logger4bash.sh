@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
+function longest_string
 ##########################
 # Returns the lenght of the longest
 # level string.
 # arg 1: One or more strings.
 # output: Echos the lenght of the longest string.
-function longest_string(){
+{
   local max=0
 
   for word in "${@}";do 
@@ -17,7 +18,7 @@ function longest_string(){
 }
 
 
-function where_am_i ()
+function where_am_i
 # Print the name of the current function:
 # args:
 #     None.
@@ -28,6 +29,7 @@ function where_am_i ()
   echo "$function_name"
 }
 
+function shlog 
 ##########################
 # Default log function
 # arg 1 (int): Variable to sign if a log massage
@@ -36,7 +38,7 @@ function where_am_i ()
 # arg 2 (str): Log level ('ERROR', 'INFO', etc...)
 # arg * (str): Log message.
 # out:         None.
-function shlog(){
+{
 
     local is_printed="${1}"
     local padding="${2}"
@@ -60,7 +62,7 @@ function shlog(){
     }      
 }
 
-function parse_args ()
+function parse_args
 ##################################################
 # Gets a ass. array handle and converts
 # args 'key=value' to handle[key]=value.
@@ -97,7 +99,7 @@ function parse_args ()
   done
 }
 
-function setup_log_file ()
+function setup_log_file
 ##################################
 # Redirect stderr default register to 
 # a file.
@@ -126,12 +128,13 @@ function setup_log_file ()
 
 }
 
+function setup_logger
 ##########################
 # Function to genarete level  
 # log functions (ex: shlog.error, shlog.info, ...).
 # arg 1 (str):  Log level: ERROR, WARNING, 'INFO'(default) or 'DEBUG'.
 # out        :  None
-function setup_logger (){
+{
     local logger_level="${__LOGGER_LEVEL:-INFO}"
     local levels
     local is_printed
